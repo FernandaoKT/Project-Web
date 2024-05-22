@@ -2,15 +2,25 @@
 session_start();
 
 $conn = mysqli_connect("localhost", "root", "", "project_web");
+if (!$conn) {
+    die("Koneksi gagal: " . mysqli_connect_error());
+}
 
-$sel = "SELECT * FROM register";
-$query = mysqli_query($conn, $sel);
-$result = mysqli_fetch_assoc($query);
+// Check if the username is set in the session
+if (isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
 
+    $sel = "SELECT * FROM register WHERE username = '$username'";
+    $query = mysqli_query($conn, $sel);
+    $result = mysqli_fetch_assoc($query);
 
-if ($result) {
-    $username = $result['username']; 
-    $email = $result['email']; 
+    if ($result) {
+        $username = $result['username'];
+        $email = $result['email'];
+    }
+} else {
+    header("Location: login.php");
+    exit;
 }
 ?>
 
@@ -21,7 +31,7 @@ if ($result) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Pengguna</title>
-    <link rel="stylesheet" href="2style.css"> 
+    <link rel="stylesheet" href="2style.css">
 </head>
 
 <body>
